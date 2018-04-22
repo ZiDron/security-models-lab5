@@ -1,0 +1,3 @@
+NonSecret 0
+Secret 1
+TopSecret 2
