@@ -28,6 +28,7 @@ public:
     QList<QString> getUsersList();
     AccessRight *getAccessRight(QString path);
     void changeRight(QString path, QString rightName);
+    void changeRightLevel(QString rightName, int newLevel);
     void changeRole(QString roleName, QList<QString> rightNames, Changes changeType);
     void changeUser(QString userName, QList<QString> roleNames, Changes changeType);
 

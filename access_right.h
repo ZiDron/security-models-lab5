@@ -9,7 +9,7 @@ public:
     AccessRight(QString name, int level);
     QString getName() const;
     int getLevel();
-    void setLevel(int level);
+    void changeLevel(int level);
     static AccessRight *empty(QString name);
 
 private:

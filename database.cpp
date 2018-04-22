@@ -139,6 +139,13 @@ void Database::changeRight(QString path, QString rightName) {
     save();
 }
 
+void Database::changeRightLevel(QString rightName, int newLevel) {
+    AccessRight *acc = getAccessRightByName(rightName);
+    if (acc) {
+        acc->changeLevel(newLevel);
+    }
+}
+
 void Database::changeRole(QString roleName, QList<QString> rightNames, Database::Changes changeType) {
     Role *role = getRoleByName(roleName);
     QList<AccessRight*> tempAccesRight;
