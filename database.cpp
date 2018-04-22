@@ -128,6 +128,7 @@ void Database::changeRight(QString path, QString rightName) {
     } else {
         fileSystemPathRightList.append(FileSystemPathRight(path, getAccessRightByName(rightName)));
     }
+    save();
 }
 
 void Database::init() {
@@ -195,6 +196,14 @@ void Database::init() {
             usersList.append(User(list[0], &initRoleList));
         }
     }
+
+    while (!filesSystemPathFile.atEnd()) {
+        QString line = filesSystemPathFile.readLine();
+        QStringList list = line.split(" ", QString::SkipEmptyParts);
+        if (list.size() == 2) {
+            fileSystemPathRightList.append(FileSystemPathRight(list[0], getAccessRightByName(list[1])));
+        }
+    }
 }
 
 void Database::save() {
@@ -223,5 +232,10 @@ void Database::save() {
             out << usersList[i].getRole()->at(j)->getName() << " ";
         }
         out << "\n";
+    }
+
+    out.setDevice(&filesSystemPathFile);
+    for (int i = 0; i < fileSystemPathRightList.size(); i++) {
+        out << fileSystemPathRightList[i].getPath() << " " << fileSystemPathRightList[i].getRights()->getName() << " ";
     }
 }
