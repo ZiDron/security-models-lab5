@@ -23,7 +23,10 @@ void Database::createNewRole(QString name, QList<QString> *rightNames) {
     QList<AccessRight *> rightListTemp;
     if (rightNames) {
         for (int i = 0; i < rightNames->size(); i++) {
-            rightListTemp.append(getAccessRightByName(rightNames->at(i)));
+            AccessRight* acc = getAccessRightByName(rightNames->at(i));
+            if (acc) {
+                rightListTemp.append(acc);
+            }
         }
     }
     roleList.append(Role(name, &rightListTemp));
@@ -34,7 +37,10 @@ void Database::createNewUser(QString name, QList<QString> *roleNames) {
     QList<Role *> roleListTemp;
     if (roleNames) {
         for (int i = 0; i < roleNames->size(); i++) {
-            roleListTemp.append(getRoleByName(roleNames->at(i)));
+            Role *role = getRoleByName(roleNames->at(i));
+            if (role) {
+                roleListTemp.append(role);
+            }
         }
     }
     usersList.append(User(name, &roleListTemp));
@@ -126,7 +132,40 @@ void Database::changeRight(QString path, QString rightName) {
             temp->setRight(newAccessRight);
         }
     } else {
-        fileSystemPathRightList.append(FileSystemPathRight(path, getAccessRightByName(rightName)));
+        if (newAccessRight) {
+            fileSystemPathRightList.append(FileSystemPathRight(path, newAccessRight));
+        }
+    }
+    save();
+}
+
+void Database::changeRole(QString roleName, QList<QString> rightNames, Database::Changes changeType) {
+    Role *role = getRoleByName(roleName);
+    QList<AccessRight*> tempAccesRight;
+    if (role) {
+        for (int i = 0; i < rightNames.size(); i++) {
+            AccessRight *acc;
+            acc = getAccessRightByName(rightNames.at(i));
+            if (acc) {
+                tempAccesRight.append(acc);
+            }
+        }
+        role->changePermissions(tempAccesRight, changeType);
+    }
+    save();
+}
+
+void Database::changeUser(QString userName, QList<QString> roleNames, Database::Changes changeType) {
+    User *user = getUserByName(userName);
+    QList<Role*> tempRoleList;
+    if (user) {
+        for (int i = 0; i < roleNames.size(); i++) {
+            Role* tempRole = getRoleByName(roleNames.at(i));
+            if (tempRole) {
+                tempRoleList.append(tempRole);
+            }
+        }
+        user->changeRole(tempRoleList, changeType);
     }
     save();
 }
@@ -201,7 +240,10 @@ void Database::init() {
         QString line = filesSystemPathFile.readLine();
         QStringList list = line.split(" ", QString::SkipEmptyParts);
         if (list.size() == 2) {
-            fileSystemPathRightList.append(FileSystemPathRight(list[0], getAccessRightByName(list[1])));
+            AccessRight *acc = getAccessRightByName(list[1]);
+            if (acc) {
+                fileSystemPathRightList.append(FileSystemPathRight(list[0], acc));
+            }
         }
     }
 }

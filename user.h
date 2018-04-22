@@ -11,6 +11,7 @@ public:
     User(QString name, QList<Role*> *roles);
     QString getName();
     QList<Role *> *getRole();
+    void changeRole(QList<Role*> roleList, int type);
 
 private:
     QString name;

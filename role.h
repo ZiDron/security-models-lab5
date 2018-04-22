@@ -10,6 +10,7 @@ public:
     Role(QString name, QList<AccessRight *> *permisions = 0);
     QString getName();
     QList<AccessRight*> *getPermisions();
+    void changePermissions(QList<AccessRight*> accesRight, int type);
 
 private:
     QString name;

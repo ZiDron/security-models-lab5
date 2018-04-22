@@ -14,3 +14,19 @@ QString Role::getName() {
 QList<AccessRight *> *Role::getPermisions() {
     return &permisions;
 }
+
+void Role::changePermissions(QList<AccessRight *> accesRight, int type) {
+    if (type) {
+        for (int i = 0; i < accesRight.size(); i++) {
+            if (permisions.contains(accesRight.at(i))) {
+                permisions.removeOne(accesRight.at(i));
+            }
+        }
+    } else {
+        for (int i = 0; i < accesRight.size(); i++) {
+            if (!permisions.contains(accesRight.at(i))) {
+                permisions.append(accesRight.at(i));
+            }
+        }
+    }
+}

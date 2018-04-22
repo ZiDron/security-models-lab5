@@ -15,3 +15,19 @@ QString User::getName() {
 QList<Role *> *User::getRole() {
     return &roles;
 }
+
+void User::changeRole(QList<Role *> roleList, int type) {
+    if (type) {
+        for (int i = 0; i < roleList.size(); i++) {
+            if (roles.contains(roleList.at(i))) {
+                roles.removeOne(roleList.at(i));
+            }
+        }
+    } else {
+        for (int i = 0; i < roleList.size(); i++) {
+            if (!roles.contains(roleList.at(i))) {
+                roles.append(roleList.at(i));
+            }
+        }
+    }
+}

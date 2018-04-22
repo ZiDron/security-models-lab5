@@ -14,6 +14,11 @@ class Database {
 
 public:
     Database();
+
+    enum Changes {
+        Add = 0,
+        Remove = 1
+    };
     void createNewRight(QString name, int level);
     void createNewRole(QString name, QList<QString> *rightNames = 0);
     void createNewUser(QString name, QList<QString> *roleNames = 0);
@@ -23,6 +28,8 @@ public:
     QList<QString> getUsersList();
     AccessRight *getAccessRight(QString path);
     void changeRight(QString path, QString rightName);
+    void changeRole(QString roleName, QList<QString> rightNames, Changes changeType);
+    void changeUser(QString userName, QList<QString> roleNames, Changes changeType);
 
 private:
     AccessRight *getAccessRightByName(QString name);
