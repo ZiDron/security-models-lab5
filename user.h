@@ -8,8 +8,8 @@
 class User {
 
 public:
-    User(QString name, QList<Role*> *roles);
-    QString getName();
+    User(QString name, QList<Role *> roles);
+    QString getName() const;
     QList<Role *> *getRole();
     void changeRole(QList<Role*> roleList, int type);
 

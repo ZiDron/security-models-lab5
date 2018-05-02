@@ -5,41 +5,39 @@ RoleMatrixWidget::RoleMatrixWidget(Database *db, QWidget *parent) : QTableWidget
     setSelectionMode(QAbstractItemView::NoSelection);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setValue(QModelIndex)));
+    connect(db, SIGNAL(updated()), this, SLOT(updateValues()));
+    updateValues();
+    setMinimumSize(1000, 600);
 }
 
 void RoleMatrixWidget::setValue(QModelIndex index) {
-//    database->angeRule(matrix->getUsersList().at(index.row()),
-//                       matrix->getAlphabet()[index.column()],
-//            (index.data().toString() == "+") ? '0' : '1');
+    database->changeUser(database->getUsersList().at(index.row()).getName(),
+                         database->getRoleList().at(index.column()).getName(),
+                         (index.data().toString() == "+") ? Database::Remove : Database::Add);
 }
 
 void RoleMatrixWidget::updateValues() {
-//    table.clear();
+    clear();
+    QList<Role> roles = database->getRoleList();
+    QStringList rolesNames = database->getRoleNameList();
+    QList<User> users = database->getUsersList();
+    QStringList usersNames = database->getUsersNameList();
+    setColumnCount(roles.count());
+    setHorizontalHeaderLabels(rolesNames);
+    setRowCount(users.count());
+    setVerticalHeaderLabels(usersNames);
+    resizeColumnsToContents();
 
-//    QString alphabet = matrix->getAlphabet();
-//    QStringList names = matrix->getUsersList();
-//    QStringList header;
-//    for (int i = 0; i < alphabet.length(); i++) {
-//        header.append(alphabet.at(i));
-//    }
-//    table.setColumnCount(header.count());
-//    table.setHorizontalHeaderLabels(header);
-//    table.setRowCount(names.count());
-//    table.setVerticalHeaderLabels(names);
-//    table.resizeColumnsToContents();
-
-//    for (int n = 0; n < names.count(); n++) {
-//        QString rule = matrix->findUserRules(names.at(n));
-//        for (int a = 0; a < header.count(); a++) {
-//            QTableWidgetItem* item = new QTableWidgetItem((rule[a] == '1') ? QString("+") : QString(""));
-//            item->setTextAlignment(Qt::AlignCenter);
-//            table.setItem(n, a, item);
-//        }
-//    }
-
-//    updateComboBox(&userComboBox, names);
-//    updateComboBox(&removeComboBox, names);
-//    updateComboBox(&grantFromComboBox, names);
-//    updateComboBox(&grantToComboBox, names);
+    for (int u = 0; u < users.count(); u++) {
+        User user = users.at(u);
+        QList<Role*> userRoles = *(user.getRole());
+        for (int r = 0; r < userRoles.count(); r++) {
+            int index = rolesNames.indexOf(userRoles.at(r)->getName());
+            if (index > 0) {
+                QTableWidgetItem* item = new QTableWidgetItem(QString("+"));
+                item->setTextAlignment(Qt::AlignCenter);
+                setItem(u, index, item);
+            }
+        }
+    }
 }
-

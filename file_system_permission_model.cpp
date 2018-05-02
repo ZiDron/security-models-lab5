@@ -16,15 +16,6 @@ QVariant FileSystemPermissionModel::data(const QModelIndex &index, int role) con
     if (index.column() == 4 && role == Qt::DisplayRole && database) {
         if (isDir(index)) {
             return  database->getAccessRight(filePath(index))->getName();
-//            if (r == SystemAccessRight::NonSecret) {
-//                return QString("Non Secret");
-//            } else if (r == SystemAccessRight::Secret) {
-//                return QString("Secret");
-//            } else if (r == SystemAccessRight::TopSecret) {
-//                return QString("Top Secret");
-//            } else {
-//                return QString("");
-//            }
         } else {
             return QVariant();
         }
@@ -32,8 +23,14 @@ QVariant FileSystemPermissionModel::data(const QModelIndex &index, int role) con
     } else {
         return QFileSystemModel::data(index, role);
     }
+
+    if (index.column() == 4 && role == Qt::FontRole) {
+        QModelIndex fontIndex = this->index(index.row(), index.column() - 1, index.parent());
+        return QFileSystemModel::data(fontIndex);
+    }
 }
 
 int FileSystemPermissionModel::columnCount(const QModelIndex &parent) const {
+    Q_UNUSED(parent);
     return 5;
 }

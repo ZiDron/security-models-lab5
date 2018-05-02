@@ -1,14 +1,14 @@
 #include "user.h"
 
 
-User::User(QString name, QList<Role *> *roles) {
+User::User(QString name, QList<Role *> roles) {
     this->name = name;
-    if (roles) {
-        this->roles.append(*roles);
+    if (!roles.isEmpty()) {
+        this->roles.append(roles);
     }
 }
 
-QString User::getName() {
+QString User::getName() const {
     return name;
 }
 

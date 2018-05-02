@@ -1,6 +1,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include <QObject>
 #include <QList>
 #include <QFile>
 #include <QTextStream>
@@ -10,8 +11,8 @@
 #include "role.h"
 #include "user.h"
 
-class Database {
-
+class Database : public QObject{
+    Q_OBJECT
 public:
     Database();
 
@@ -23,15 +24,19 @@ public:
     void createNewRole(QString name, QList<QString> *rightNames = 0);
     void createNewUser(QString name, QList<QString> *roleNames = 0);
 
-    QList<QString> getRightsList();
-    QList<QString> getRoleList();
-    QList<QString> getUsersList();
+    QList<AccessRight> getRightsList();
+    QList<Role> getRoleList();
+    QList<User> getUsersList();
     AccessRight *getAccessRight(QString path);
     void changeRight(QString path, QString rightName);
     void changeRightLevel(QString rightName, int newLevel);
     void changeRole(QString roleName, QList<QString> rightNames, Changes changeType);
     void changeUser(QString userName, QList<QString> roleNames, Changes changeType);
+    void changeUser(QString userName, QString roleName, Changes changeType);
 
+    QList<QString> getRightsNameList();
+    QList<QString> getRoleNameList();
+    QList<QString> getUsersNameList();
 private:
     AccessRight *getAccessRightByName(QString name);
     FileSystemPathRight *getFileSystemPathRighByPath(QString path);
@@ -52,6 +57,9 @@ private:
     QList<AccessRight> rightsList;
     QList<Role> roleList;
     QList<User> usersList;
+
+signals:
+    void updated();
 };
 
 #endif // DATABASE_H

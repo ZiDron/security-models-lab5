@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     access_right.cpp \
     database.cpp \
     file_system_path_right.cpp \
-    role_matrix_widget.cpp
+    role_matrix_widget.cpp \
+    file_system_view_widget.cpp
 
 HEADERS  += widget.h \
     application.h \
@@ -33,4 +34,5 @@ HEADERS  += widget.h \
     access_right.h \
     database.h \
     file_system_path_right.h \
-    role_matrix_widget.h
+    role_matrix_widget.h \
+    file_system_view_widget.h

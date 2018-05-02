@@ -7,8 +7,8 @@
 class Role {
 
 public:
-    Role(QString name, QList<AccessRight *> *permisions = 0);
-    QString getName();
+    Role(QString name, QList<AccessRight *> permisions = QList<AccessRight *>());
+    QString getName() const;
     QList<AccessRight*> *getPermisions();
     void changePermissions(QList<AccessRight*> accesRight, int type);
 

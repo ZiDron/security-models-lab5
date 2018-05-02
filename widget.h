@@ -2,23 +2,10 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QTreeView>
-#include <QFileSystemModel>
-#include <QSplitter>
-#include <QHeaderView>
-#include "system_access_right.h"
-#include "file_system_permission_model.h"
-#include "database.h"
-#include <QMessageBox>
-#include <QDialog>
-#include <QComboBox>
+#include "file_system_view_widget.h"
+#include "role_matrix_widget.h"
 
-class Widget : public QWidget
-{
+class Widget : public QWidget {
     Q_OBJECT
 
 public:
@@ -28,38 +15,11 @@ public:
     ~Widget();
 
 private:
-    SystemAccessRight *systemAccessRight;
-    Database *database;
-    QVBoxLayout mainLayout;
-    QHBoxLayout editPuttonsLayout;
-    QSplitter splitter;
-    QLineEdit pathLineEditLeft;
-    QLineEdit pathLineEditRight;
-    QTreeView treeViewLeft;
-    QTreeView treeViewRight;
-    QTreeView* focusTreeView;
-    FileSystemPermissionModel *modelLeft;
-    FileSystemPermissionModel *modelRight;
-    QPushButton *copyButton;
-    QPushButton *nonSecretButton;
-    QPushButton *secretButton;
-    QPushButton *topSecretButton;
-    QPushButton *mkdirButton;
-    QComboBox currentUserComboBox;
+    FileSystemViewWidget userFileSystemView;
+    RoleMatrixWidget roleMatrix;
 
-public slots:
-    void copyButtonClickedSlot();
-    void setNonSecretSlot();
-    void setSecretSlot();
-    void setTopSecretSlot();
 
-private slots:
-    void leftUpSlot();
-    void rightUpSlot();
-    void leftTreeViewClickedSlot(QModelIndex index);
-    void rightTreeViewClickedSlot(QModelIndex index);
-    void leftTreeViewActivatedSlot(QModelIndex index);
-    void rightTreeViewActivatedSlot(QModelIndex index);
+
 };
 
 #endif // WIDGET_H

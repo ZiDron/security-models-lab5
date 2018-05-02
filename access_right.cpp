@@ -15,7 +15,7 @@ int AccessRight::getLevel() {
     return level;
 }
 
-void AccessRight::setLevel(int level) {
+void AccessRight::changeLevel(int level) {
     this->level = level;
 }
 

@@ -81,4 +81,5 @@ bool SystemAccessRight::copy(QString srcPath, QString dstPath) {
         srcDir.mkpath(dstPath);
         return QFile::copy(srcDir.absolutePath(), dstDir.absolutePath());
     }
+    return false;
 }
