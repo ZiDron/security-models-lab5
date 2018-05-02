@@ -24,9 +24,9 @@ public:
     void createNewRole(QString name, QList<QString> *rightNames = 0);
     void createNewUser(QString name, QList<QString> *roleNames = 0);
 
-    QList<AccessRight> getRightsList();
-    QList<Role> getRoleList();
-    QList<User> getUsersList();
+    QList<AccessRight*> getRightsList();
+    QList<Role*> getRoleList();
+    QList<User*> getUsersList();
     AccessRight *getAccessRight(QString path);
     void changeRight(QString path, QString rightName);
     void changeRightLevel(QString rightName, int newLevel);
@@ -53,10 +53,10 @@ private:
     QFile roleListFile;
     QFile userListFile;
 
-    QList<FileSystemPathRight> fileSystemPathRightList;
-    QList<AccessRight> rightsList;
-    QList<Role> roleList;
-    QList<User> usersList;
+    QList<FileSystemPathRight*> fileSystemPathRightList;
+    QList<AccessRight*> rightsList;
+    QList<Role*> roleList;
+    QList<User*> usersList;
 
 signals:
     void updated();

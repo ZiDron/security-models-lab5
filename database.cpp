@@ -15,8 +15,7 @@ Database::Database() {
 }
 
 void Database::createNewRight(QString name, int level) {
-    AccessRight right(name, level);
-    rightsList.append(right);
+    rightsList.append(new AccessRight(name, level));
     save();
     emit updated();
 }
@@ -31,8 +30,7 @@ void Database::createNewRole(QString name, QList<QString> *rightNames) {
             }
         }
     }
-    Role role(name, rightListTemp);
-    roleList.append(role);
+    roleList.append(new Role(name, rightListTemp));
     save();
     emit updated();
 }
@@ -47,28 +45,27 @@ void Database::createNewUser(QString name, QList<QString> *roleNames) {
             }
         }
     }
-    User user(name, roleListTemp);
-    usersList.append(user);
+    usersList.append(new User(name, roleListTemp));
     save();
     emit updated();
 }
 
-QList<AccessRight> Database::getRightsList() {
+QList<AccessRight *> Database::getRightsList() {
     return rightsList;
 }
 
-QList<Role> Database::getRoleList() {
+QList<Role *> Database::getRoleList() {
     return roleList;
 }
 
-QList<User> Database::getUsersList() {
+QList<User *> Database::getUsersList() {
     return usersList;
 }
 
 AccessRight *Database::getAccessRightByName(QString name) {
     for (int i = 0; i < rightsList.size(); i++) {
-        if (rightsList[i].getName() == name) {
-            return &rightsList[i];
+        if (rightsList[i]->getName() == name) {
+            return rightsList[i];
         }
     }
     return NULL;
@@ -76,8 +73,8 @@ AccessRight *Database::getAccessRightByName(QString name) {
 
 FileSystemPathRight *Database::getFileSystemPathRighByPath(QString path) {
     for (int i = 0; i < fileSystemPathRightList.size(); i++) {
-        if (fileSystemPathRightList[i].getPath() == path) {
-            return &fileSystemPathRightList[i];
+        if (fileSystemPathRightList[i]->getPath() == path) {
+            return fileSystemPathRightList[i];
         }
     }
     return NULL;
@@ -85,8 +82,8 @@ FileSystemPathRight *Database::getFileSystemPathRighByPath(QString path) {
 
 Role *Database::getRoleByName(QString name) {
     for (int i = 0; i < roleList.size(); i++) {
-        if (roleList[i].getName() == name) {
-            return &(roleList[i]);
+        if (roleList[i]->getName() == name) {
+            return roleList[i];
         }
     }
     return NULL;
@@ -94,8 +91,8 @@ Role *Database::getRoleByName(QString name) {
 
 User *Database::getUserByName(QString name) {
     for (int i = 0; i < usersList.size(); i++) {
-        if (usersList[i].getName() == name) {
-            return &(usersList[i]);
+        if (usersList[i]->getName() == name) {
+            return usersList[i];
         }
     }
     return NULL;
@@ -103,8 +100,8 @@ User *Database::getUserByName(QString name) {
 
 QString Database::getLowRightName() {
     for (int i = 0; i < rightsList.size(); i++) {
-        if (rightsList[i].getLevel() == 0) {
-            return rightsList[i].getName();
+        if (rightsList[i]->getLevel() == 0) {
+            return rightsList[i]->getName();
         }
     }
 }
@@ -112,7 +109,7 @@ QString Database::getLowRightName() {
 QList<QString> Database::getRightsNameList() {
     QList<QString> list;
     for (int i = 0; i < rightsList.size(); i++) {
-        list.append(rightsList[i].getName());
+        list.append(rightsList[i]->getName());
     }
     return list;
 }
@@ -120,7 +117,7 @@ QList<QString> Database::getRightsNameList() {
 QList<QString> Database::getRoleNameList() {
     QList<QString> list;
     for (int i = 0; i < roleList.size(); i++) {
-        list.append(roleList[i].getName());
+        list.append(roleList[i]->getName());
     }
     return list;
 }
@@ -128,7 +125,7 @@ QList<QString> Database::getRoleNameList() {
 QList<QString> Database::getUsersNameList() {
     QList<QString> list;
     for (int i = 0; i < usersList.size(); i++) {
-        list.append(usersList[i].getName());
+        list.append(usersList[i]->getName());
     }
     return list;
 }
@@ -151,8 +148,7 @@ void Database::changeRight(QString path, QString rightName) {
         }
     } else {
         if (newAccessRight) {
-            FileSystemPathRight right(path, newAccessRight);
-            fileSystemPathRightList.append(right);
+            fileSystemPathRightList.append(new FileSystemPathRight(path, newAccessRight));
         }
     }
     save();
@@ -234,8 +230,7 @@ void Database::init() {
         line.remove('\n');
         QStringList list = line.split(" ", QString::SkipEmptyParts);
         if (list.size() == 2) {
-            AccessRight right(list[0], list[1].toInt());
-            rightsList.append(right);
+            rightsList.append(new AccessRight(list[0], list[1].toInt()));
         }
     }
 
@@ -253,8 +248,7 @@ void Database::init() {
         }
 
         if (list.size()) {
-            Role role(list[0], initAccessRightList);
-            roleList.append(role);
+            roleList.append(new Role(list[0], initAccessRightList));
         }
     }
 
@@ -272,8 +266,7 @@ void Database::init() {
         }
 
         if (initRoleList.size()) {
-            User user(list[0], initRoleList);
-            usersList.append(user);
+            usersList.append(new User(list[0], initRoleList));
         }
     }
 
@@ -283,8 +276,7 @@ void Database::init() {
         if (list.size() == 2) {
             AccessRight *acc = getAccessRightByName(list[1]);
             if (acc) {
-                FileSystemPathRight right(list[0], acc);
-                fileSystemPathRightList.append(right);
+                fileSystemPathRightList.append(new FileSystemPathRight(list[0], acc));
             }
         }
     }
@@ -307,36 +299,43 @@ void Database::save() {
     if (!userListFile.open(QIODevice::ReadWrite)) {
         qDebug() << "Cant open " << userListFile.fileName();
     }
-
+    filesSystemPathFile.seek(0);
+    filesSystemPathFile.resize(0);
     rightListFile.seek(0);
     rightListFile.resize(0);
     roleListFile.seek(0);
     roleListFile.resize(0);
+    userListFile.seek(0);
+    userListFile.resize(0);
 
     QTextStream out(&rightListFile);
     for (int i = 0; i < rightsList.size(); i++) {
-        out << rightsList[i].getName() << " " << rightsList[i].getLevel() << "\n";
+        out << rightsList[i]->getName() << " " << rightsList[i]->getLevel() << "\n";
     }
 
     out.setDevice(&roleListFile);
     for (int i = 0; i < roleList.size(); i++) {
-        out << roleList[i].getName() << " ";
-        for (int j = 0; j < roleList[i].getPermisions()->size(); j++) {
-            out << roleList[i].getPermisions()->at(j)->getName() << " ";
+        out << roleList[i]->getName() << " ";
+        for (int j = 0; j < roleList[i]->getPermisions()->size(); j++) {
+            out << roleList[i]->getPermisions()->at(j)->getName() << " ";
         }
         out << "\n";
     }
     out.setDevice(&userListFile);
     for (int i = 0; i < usersList.size(); i++) {
-        out << usersList[i].getName() << " ";
-        for (int j = 0; j < usersList[i].getRole()->size(); j++) {
-            out << usersList[i].getRole()->at(j)->getName() << " ";
+        out << usersList[i]->getName() << " ";
+        for (int j = 0; j < usersList[i]->getRole()->size(); j++) {
+            out << usersList[i]->getRole()->at(j)->getName() << " ";
         }
         out << "\n";
     }
 
     out.setDevice(&filesSystemPathFile);
     for (int i = 0; i < fileSystemPathRightList.size(); i++) {
-        out << fileSystemPathRightList[i].getPath() << " " << fileSystemPathRightList[i].getRights()->getName() << " ";
+        out << fileSystemPathRightList[i]->getPath() << " " << fileSystemPathRightList[i]->getRights()->getName() << " ";
     }
+    filesSystemPathFile.close();
+    rightListFile.close();
+    roleListFile.close();
+    userListFile.close();
 }
