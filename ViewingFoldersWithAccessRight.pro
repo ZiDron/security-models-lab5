@@ -23,7 +23,10 @@ SOURCES += main.cpp\
     database.cpp \
     file_system_path_right.cpp \
     role_matrix_widget.cpp \
-    file_system_view_widget.cpp
+    file_system_view_widget.cpp \
+    matrix_widget.cpp \
+    access_right_matrix_widget.cpp \
+    permission_filter_model.cpp
 
 HEADERS  += widget.h \
     application.h \
@@ -35,4 +38,7 @@ HEADERS  += widget.h \
     database.h \
     file_system_path_right.h \
     role_matrix_widget.h \
-    file_system_view_widget.h
+    file_system_view_widget.h \
+    matrix_widget.h \
+    access_right_matrix_widget.h \
+    permission_filter_model.h

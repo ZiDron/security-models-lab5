@@ -31,6 +31,7 @@ public:
     void changeRight(QString path, QString rightName);
     void changeRightLevel(QString rightName, int newLevel);
     void changeRole(QString roleName, QList<QString> rightNames, Changes changeType);
+    void changeRole(QString roleName, QString rightName, Changes changeType);
     void changeUser(QString userName, QList<QString> roleNames, Changes changeType);
     void changeUser(QString userName, QString roleName, Changes changeType);
 

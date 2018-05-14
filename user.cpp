@@ -16,6 +16,14 @@ QList<Role *> *User::getRole() {
     return &roles;
 }
 
+QList<AccessRight *> User::getRights() const {
+    QList<AccessRight*> list;
+    for (int i = 0; i < roles.count(); i++) {
+        list.append(*(roles.at(i)->getPermisions()));
+    }
+    return list;
+}
+
 void User::changeRole(QList<Role *> roleList, int type) {
     if (type) {
         for (int i = 0; i < roleList.size(); i++) {

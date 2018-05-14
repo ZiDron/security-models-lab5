@@ -13,10 +13,14 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
     pathLineEditRight.setReadOnly(1);
     modelLeft = new FileSystemPermissionModel(database);
     modelRight = new FileSystemPermissionModel(database);
+    filterModelLeft = new PermissionFilterModel(database);
+    filterModelRight = new PermissionFilterModel(database);
     modelLeft->setFilter(QDir::AllEntries | QDir::NoDot);
     modelRight->setFilter(QDir::AllEntries | QDir::NoDot);
     modelLeft->setRootPath(QString("/"));
     modelRight->setRootPath(QString("/"));
+    filterModelLeft->setSourceModel(modelLeft);
+    filterModelRight->setSourceModel(modelRight);
     treeViewLeft.setAllColumnsShowFocus(1);
     treeViewLeft.setExpandsOnDoubleClick(0);
     treeViewLeft.setItemsExpandable(0);
@@ -27,8 +31,8 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
     treeViewRight.setUniformRowHeights(1);
     treeViewLeft.setSelectionBehavior(QAbstractItemView::SelectRows);
     treeViewRight.setSelectionBehavior(QAbstractItemView::SelectRows);
-    treeViewLeft.setModel(modelLeft);
-    treeViewRight.setModel(modelRight);
+    treeViewLeft.setModel(filterModelLeft);
+    treeViewRight.setModel(filterModelRight);
     treeViewLeft.setRootIsDecorated(0);
     treeViewRight.setRootIsDecorated(0);
     treeViewLeft.header()->setStretchLastSection(0);
@@ -103,7 +107,7 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
 
 
     currentUserComboBox.addItems(database->getUsersNameList());
-
+    connect(&currentUserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(userChosenSlot(int)));
     editPuttonsLayout.addWidget(&currentUserComboBox);
 
     copyButton->setText(QString("Copy F5"));
@@ -182,7 +186,7 @@ void FileSystemViewWidget::leftUpSlot() {
     if (dir.cdUp()) {
         pathLineEditLeft.setText(dir.absolutePath());
         modelLeft->setRootPath(dir.absolutePath());
-        treeViewLeft.setRootIndex(modelLeft->index(dir.absolutePath()));
+        treeViewLeft.setRootIndex(filterModelLeft->mapFromSource(modelLeft->index(dir.absolutePath())));
     }
 }
 
@@ -191,7 +195,7 @@ void FileSystemViewWidget::rightUpSlot() {
     if (dir.cdUp()) {
         pathLineEditRight.setText(dir.absolutePath());
         modelRight->setRootPath(dir.absolutePath());
-        treeViewRight.setRootIndex(modelRight->index(dir.absolutePath()));
+        treeViewRight.setRootIndex(filterModelRight->mapFromSource(modelRight->index(dir.absolutePath())));
     }
 }
 
@@ -199,7 +203,7 @@ void FileSystemViewWidget::leftTreeViewClickedSlot(QModelIndex index) {
     QDir dir(pathLineEditLeft.text());
     if (index.data().toString() == QString("..")) {
         if (dir.cdUp()) {
-            treeViewLeft.setRootIndex(modelLeft->index(dir.absolutePath()));
+            treeViewLeft.setRootIndex(filterModelLeft->mapFromSource(modelLeft->index(dir.absolutePath())));
         }
     } else {
         if (dir.cd(index.data().toString())) {
@@ -208,7 +212,7 @@ void FileSystemViewWidget::leftTreeViewClickedSlot(QModelIndex index) {
     }
     pathLineEditLeft.setText(dir.absolutePath());
     modelLeft->setRootPath(dir.absolutePath());
-    treeViewLeft.setModel(modelLeft);
+    treeViewLeft.setModel(filterModelLeft);
     treeViewRight.clearSelection();
 }
 
@@ -216,14 +220,14 @@ void FileSystemViewWidget::rightTreeViewClickedSlot(QModelIndex index) {
     QDir dir(pathLineEditRight.text());
     if (index.data().toString() == QString("..")) {
         if (dir.cdUp()) {
-            treeViewRight.setRootIndex(modelRight->index(dir.absolutePath()));
+            treeViewRight.setRootIndex(filterModelRight->mapFromSource(modelRight->index(dir.absolutePath())));
         }
     } else if (dir.cd(index.data().toString())) {
         treeViewRight.setRootIndex(index);
     }
     pathLineEditRight.setText(dir.absolutePath());
     modelRight->setRootPath(dir.absolutePath());
-    treeViewRight.setModel(modelRight);
+    treeViewRight.setModel(filterModelRight);
     treeViewLeft.clearSelection();
 }
 
@@ -235,4 +239,12 @@ void FileSystemViewWidget::leftTreeViewActivatedSlot(QModelIndex index) {
 void FileSystemViewWidget::rightTreeViewActivatedSlot(QModelIndex index) {
     focusTreeView = &treeViewRight;
     treeViewLeft.clearSelection();
+}
+
+void FileSystemViewWidget::userChosenSlot(int index) {
+    User* user = database->getUsersList().at(index);
+    filterModelLeft->setUser(user);
+    filterModelRight->setUser(user);
+    filterModelLeft->invalidate();
+    filterModelRight->invalidate();
 }

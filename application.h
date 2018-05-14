@@ -11,10 +11,6 @@ class Application : public QObject {
     Q_OBJECT
 public:
     Application();
-    void show();
-//    void changeAccessRight(QDir *folder, SystemAccessRight::AccessRight right);
-//    void changeAccessRight(QString path, SystemAccessRight::AccessRight right);
-//    SystemAccessRight::AccessRight getAccessRight(QString path);
 
 private:
     Database database;

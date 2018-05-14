@@ -3,23 +3,19 @@
 
 #include <QWidget>
 #include <QTableWidget>
+#include "matrix_widget.h"
 #include "database.h"
 
-class RoleMatrixWidget : public QTableWidget {
+class RoleMatrixWidget : public MatrixWidget {
     Q_OBJECT
 public:
-    explicit RoleMatrixWidget(Database *db, QWidget *parent = nullptr);
-
-signals:
+    RoleMatrixWidget(Database *db, QWidget *parent = nullptr);
 
 public slots:
-
     void updateValues();
+
 private slots:
     void setValue(QModelIndex index);
-
-private:
-    Database *database;
 };
 
 #endif // ROLE_MATRIX_WIDGET_H

@@ -12,6 +12,7 @@
 #include <QHeaderView>
 #include "system_access_right.h"
 #include "file_system_permission_model.h"
+#include "permission_filter_model.h"
 #include "database.h"
 #include <QMessageBox>
 #include <QDialog>
@@ -40,12 +41,15 @@ private:
     QTreeView* focusTreeView;
     FileSystemPermissionModel *modelLeft;
     FileSystemPermissionModel *modelRight;
+    PermissionFilterModel *filterModelLeft;
+    PermissionFilterModel *filterModelRight;
     QPushButton *copyButton;
     QPushButton *nonSecretButton;
     QPushButton *secretButton;
     QPushButton *topSecretButton;
     QPushButton *mkdirButton;
     QComboBox currentUserComboBox;
+
 
 public slots:
     void copyButtonClickedSlot();
@@ -60,6 +64,7 @@ private slots:
     void rightTreeViewClickedSlot(QModelIndex index);
     void leftTreeViewActivatedSlot(QModelIndex index);
     void rightTreeViewActivatedSlot(QModelIndex index);
+    void userChosenSlot(int index);
 };
 
 #endif // FILE_SYSTEM_VIEW_WIDGET_H

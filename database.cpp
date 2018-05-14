@@ -135,7 +135,7 @@ AccessRight *Database::getAccessRight(QString path) {
     if (temp) {
         return temp->getRights();
     } else {
-        return AccessRight::empty(getLowRightName());
+        return getAccessRightByName(getLowRightName());
     }
 }
 
@@ -177,6 +177,12 @@ void Database::changeRole(QString roleName, QList<QString> rightNames, Database:
     }
     save();
     emit updated();
+}
+
+void Database::changeRole(QString roleName, QString rightName, Database::Changes changeType) {
+    QList<QString> l;
+    l.append(rightName);
+    changeRole(roleName, l, changeType);
 }
 
 void Database::changeUser(QString userName, QList<QString> roleNames, Database::Changes changeType) {
