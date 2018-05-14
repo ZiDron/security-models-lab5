@@ -3,8 +3,7 @@
 
 #include <QWidget>
 #include "file_system_view_widget.h"
-#include "role_matrix_widget.h"
-#include "access_right_matrix_widget.h"
+#include "matrixes_widget.h"
 
 class Widget : public QWidget {
     Q_OBJECT
@@ -17,8 +16,7 @@ public:
 
 private:
     FileSystemViewWidget userFileSystemView;
-    RoleMatrixWidget roleMatrix;
-    AccessRightMatrixWidget accessRightMatrix;
+    MatrixesWidget matrixesWidget;
 };
 
 #endif // WIDGET_H

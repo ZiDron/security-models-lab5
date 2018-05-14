@@ -2,11 +2,9 @@
 
 Widget::Widget(SystemAccessRight *systemAccessRight, Database *database, QWidget *parent) : QWidget(parent),
     userFileSystemView(systemAccessRight, database),
-    roleMatrix(database),
-    accessRightMatrix(database) {
+    matrixesWidget(database) {
     userFileSystemView.show();
-    roleMatrix.show();
-    accessRightMatrix.show();
+    matrixesWidget.show();
     hide();
 }
 

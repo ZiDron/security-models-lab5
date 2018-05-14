@@ -3,6 +3,7 @@
 PermissionFilterModel::PermissionFilterModel(Database *database) : QSortFilterProxyModel() {
     this->database = database;
     user = 0;
+    connect(database, SIGNAL(updated()), this, SLOT(invalidate()));
 }
 
 void PermissionFilterModel::setUser(User *value) {

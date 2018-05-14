@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     file_system_view_widget.cpp \
     matrix_widget.cpp \
     access_right_matrix_widget.cpp \
-    permission_filter_model.cpp
+    permission_filter_model.cpp \
+    matrixes_widget.cpp \
+    create_items_widget.cpp
 
 HEADERS  += widget.h \
     application.h \
@@ -41,4 +43,6 @@ HEADERS  += widget.h \
     file_system_view_widget.h \
     matrix_widget.h \
     access_right_matrix_widget.h \
-    permission_filter_model.h
+    permission_filter_model.h \
+    matrixes_widget.h \
+    create_items_widget.h

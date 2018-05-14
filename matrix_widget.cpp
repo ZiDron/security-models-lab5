@@ -6,5 +6,4 @@ MatrixWidget::MatrixWidget(Database *db, QWidget *parent) : QTableWidget(parent)
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setValue(QModelIndex)));
     connect(db, SIGNAL(updated()), this, SLOT(updateValues()));
-    setMinimumSize(1000, 600);
 }
