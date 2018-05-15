@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "file_system_view_widget.h"
 #include "matrixes_widget.h"
+#include "create_items_widget.h"
 
 class Widget : public QWidget {
     Q_OBJECT
@@ -17,6 +18,7 @@ public:
 private:
     FileSystemViewWidget userFileSystemView;
     MatrixesWidget matrixesWidget;
+    CreateItemsWidget createItemsWidget;
 };
 
 #endif // WIDGET_H

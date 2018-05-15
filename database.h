@@ -10,6 +10,7 @@
 #include "access_right.h"
 #include "role.h"
 #include "user.h"
+#include <QStringList>
 
 class Database : public QObject{
     Q_OBJECT

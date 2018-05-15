@@ -3,16 +3,19 @@
 
 #include <QWidget>
 #include "database.h"
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 
 class CreateItemsWidget : public QWidget {
+    Q_OBJECT
+
 public:
     CreateItemsWidget(Database *db, QWidget *parent = 0);
 
 private:
-    QVBoxLayout mainLayout;
+    QGridLayout mainLayout;
     QLineEdit userNameLineEdit;
     QPushButton userCreateButton;
 
@@ -21,6 +24,9 @@ private:
 
     QLineEdit accessRightNameLineEdit;
     QPushButton accessRightCreateButton;
+    QSpinBox accessRightLevelSpinBox;
+
+    Database *database;
 
 public slots:
     void userCreateSlot();
