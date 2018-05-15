@@ -64,6 +64,58 @@ bool Database::createNewUser(QString name, QList<QString> *roleNames) {
     return true;
 }
 
+bool Database::removeRight(QString name) {
+    AccessRight *right = getAccessRightByName(name);
+
+    if (!right) {
+        return false;
+    }
+
+    rightsList.removeAll(right); /// удаление самого правила
+
+    for (int i = 0; i < fileSystemPathRightList.size(); i++) {
+        if (fileSystemPathRightList.at(i)->getRights() == right) {
+            fileSystemPathRightList.at(i)->setRight(getAccessRightByName(getLowRightName()));  /// устанавливаем новое наимешьнее правило для пути
+        }
+    }
+
+    for (int i = 0; i < roleList.size(); i++) {
+        if (roleList.at(i)->getPermisions()->contains(right)) {
+            roleList.at(i)->getPermisions()->removeAll(right);
+        }
+    }
+    return true;
+}
+
+bool Database::removeRole(QString name) {
+    Role *role = getRoleByName(name);
+
+    if (!role) {
+        return false;
+    }
+
+    roleList.removeAll(role);
+
+    for (int i = 0; i < usersList.size(); i++) {
+        if (usersList.at(i)->getRole()->contains(role)) {
+            usersList.at(i)->getRole()->removeAll(role);
+        }
+    }
+    return true;
+}
+
+bool Database::removeUser(QString name) {
+    User *user = getUserByName(name);
+
+    if (!user) {
+        return false;
+    }
+
+    usersList.removeAll(user);
+
+    return true;
+}
+
 QList<AccessRight *> Database::getRightsList() {
     return rightsList;
 }

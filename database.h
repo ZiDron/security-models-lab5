@@ -25,6 +25,10 @@ public:
     bool createNewRole(QString name, QList<QString> *rightNames = 0);
     bool createNewUser(QString name, QList<QString> *roleNames = 0);
 
+    bool removeRight(QString name);
+    bool removeRole(QString name);
+    bool removeUser(QString name);
+
     QList<AccessRight*> getRightsList();
     QList<Role*> getRoleList();
     QList<User*> getUsersList();
