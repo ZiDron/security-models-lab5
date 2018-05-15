@@ -17,6 +17,7 @@
 #include <QMessageBox>
 #include <QDialog>
 #include <QComboBox>
+#include <QSignalMapper>
 
 class FileSystemViewWidget : public QWidget
 {
@@ -24,15 +25,17 @@ class FileSystemViewWidget : public QWidget
 public:
     explicit FileSystemViewWidget(SystemAccessRight *systemAccessRight, Database *database, QWidget *parent = nullptr);
 
-signals:
-
-public slots:
+public:
+    enum ControlState {
+        AdministratorControl = 0,
+        UserControl = 1
+    };
 
 private:
     SystemAccessRight *systemAccessRight;
     Database *database;
     QVBoxLayout mainLayout;
-    QHBoxLayout editPuttonsLayout;
+    QHBoxLayout editButtonsLayout;
     QSplitter splitter;
     QLineEdit pathLineEditLeft;
     QLineEdit pathLineEditRight;
@@ -47,15 +50,13 @@ private:
     QPushButton *nonSecretButton;
     QPushButton *secretButton;
     QPushButton *topSecretButton;
-    QPushButton *mkdirButton;
-    QComboBox currentUserComboBox;
-
+    QComboBox *currentUserComboBox;
+    ControlState state;
+    QWidget buttonsWidget;
+    QSignalMapper mapper;
 
 public slots:
     void copyButtonClickedSlot();
-    void setNonSecretSlot();
-    void setSecretSlot();
-    void setTopSecretSlot();
 
 private slots:
     void leftUpSlot();
@@ -65,6 +66,12 @@ private slots:
     void leftTreeViewActivatedSlot(QModelIndex index);
     void rightTreeViewActivatedSlot(QModelIndex index);
     void userChosenSlot(int index);
+    void changeAdminControls();
+    void updateButtons();
+    void clearLayout(QLayout* layout, bool deleteWidgets = true);
+    void changePathRight(QString right);
+
+
 };
 
 #endif // FILE_SYSTEM_VIEW_WIDGET_H

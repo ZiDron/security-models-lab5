@@ -4,10 +4,11 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
     mainLayout(this),
     splitter(this),
     treeViewLeft(this),
-    treeViewRight(this),
-    currentUserComboBox(this) {
+    treeViewRight(this) {
     this->systemAccessRight = systemAccessRight;
     this->database = database;
+    state = UserControl;
+    buttonsWidget.setLayout(&editButtonsLayout);
 
     pathLineEditLeft.setReadOnly(1);
     pathLineEditRight.setReadOnly(1);
@@ -77,66 +78,24 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
 
     rightAreaLayout->addWidget(&treeViewRight, 10);
 
-    editPuttonsLayout.setContentsMargins(0, 0, 0, 0);
-    editPuttonsLayout.setSpacing(0);
-    for (int i = 0; i < 7; i++) {
-        QPushButton *btn = new QPushButton(QString("Button %1").arg(i + 1), this);
-        btn->setFlat(1);
-        editPuttonsLayout.addWidget(btn);
-        QFrame *line = new QFrame(this);
-        line->setFrameShape(QFrame::VLine);
-        line->setFrameShadow(QFrame::Raised);
-        editPuttonsLayout.addWidget(line);
-        if (i == 2) {
-            copyButton = btn;
-        }
-        if (i == 3) {
-            nonSecretButton = btn;
-        }
-        if (i == 4) {
-            secretButton = btn;
-        }
-        if (i == 5) {
-            topSecretButton = btn;
-        }
-        if (i == 6) {
-            mkdirButton = btn;
-        }
+    editButtonsLayout.setContentsMargins(0, 0, 0, 0);
+    editButtonsLayout.setSpacing(0);
 
-    }
-
-
-    currentUserComboBox.addItems(database->getUsersNameList());
-    connect(&currentUserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(userChosenSlot(int)));
-    editPuttonsLayout.addWidget(&currentUserComboBox);
-
-    copyButton->setText(QString("Copy F5"));
-    copyButton->setShortcut(QKeySequence(Qt::Key_F5));
-    connect(copyButton, SIGNAL(released()), this, SLOT(copyButtonClickedSlot()));
-
-    nonSecretButton->setText(QString("Non Secret F6"));
-    nonSecretButton->setShortcut(QKeySequence(Qt::Key_F6));
-    connect(nonSecretButton, SIGNAL(released()), this, SLOT(setNonSecretSlot()));
-
-    secretButton->setText(QString("Secret F7"));
-    secretButton->setShortcut(QKeySequence(Qt::Key_F7));
-    connect(secretButton, SIGNAL(released()), this, SLOT(setSecretSlot()));
-
-    topSecretButton->setText(QString("Top Secret F8"));
-    topSecretButton->setShortcut(QKeySequence(Qt::Key_F8));
-    connect(topSecretButton, SIGNAL(released()), this, SLOT(setTopSecretSlot()));
+    updateButtons();
 
     splitter.addWidget(leftArea);
     splitter.addWidget(rightArea);
     mainLayout.setContentsMargins(0, 0, 0, 0);
     mainLayout.setSpacing(0);
     mainLayout.addWidget(&splitter, 1);
-    mainLayout.addLayout(&editPuttonsLayout);
+    mainLayout.addWidget(&buttonsWidget);
 
+    connect(&mapper, SIGNAL(mapped(QString)), this, SLOT());
     connect(&treeViewLeft, SIGNAL(clicked(QModelIndex)), this, SLOT(leftTreeViewActivatedSlot(QModelIndex)));
     connect(&treeViewRight, SIGNAL(clicked(QModelIndex)), this, SLOT(rightTreeViewActivatedSlot(QModelIndex)));
     connect(&treeViewLeft, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(leftTreeViewClickedSlot(QModelIndex)));
     connect(&treeViewRight, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(rightTreeViewClickedSlot(QModelIndex)));
+
     setMinimumSize(1000, 600);
 }
 
@@ -152,33 +111,6 @@ void FileSystemViewWidget::copyButtonClickedSlot() {
     if (!systemAccessRight->copy(source, destination)){
         QMessageBox::critical(this, QString("Permission Error!"), QString("Operation not permitted!"));
     };
-}
-
-void FileSystemViewWidget::setNonSecretSlot() {
-    FileSystemPermissionModel *model = dynamic_cast<FileSystemPermissionModel*>(focusTreeView->model());
-    if (model) {
-        QList<QString> list = database->getRightsNameList();
-        database->changeRight(model->filePath(focusTreeView->currentIndex()), list[0]/*SystemAccessRight::NonSecret*/);
-        focusTreeView->update(focusTreeView->currentIndex());
-    }
-}
-
-void FileSystemViewWidget::setSecretSlot() {
-    FileSystemPermissionModel *model = dynamic_cast<FileSystemPermissionModel*>(focusTreeView->model());
-    if (model) {
-        QList<QString> list = database->getRightsNameList();
-        database->changeRight(model->filePath(focusTreeView->currentIndex()), list[1]/*SystemAccessRight::Secret*/);
-        focusTreeView->update(focusTreeView->currentIndex());
-    }
-}
-
-void FileSystemViewWidget::setTopSecretSlot() {
-    FileSystemPermissionModel *model = dynamic_cast<FileSystemPermissionModel*>(focusTreeView->model());
-    if (model) {
-        QList<QString> list = database->getRightsNameList();
-        database->changeRight(model->filePath(focusTreeView->currentIndex()), list[2]/*SystemAccessRight::TopSecret*/);
-        focusTreeView->update(focusTreeView->currentIndex());
-    }
 }
 
 void FileSystemViewWidget::leftUpSlot() {
@@ -247,4 +179,68 @@ void FileSystemViewWidget::userChosenSlot(int index) {
     filterModelRight->setUser(user);
     filterModelLeft->invalidate();
     filterModelRight->invalidate();
+}
+
+void FileSystemViewWidget::changeAdminControls() {
+    state = (ControlState)!state;
+    if (state == UserControl) {
+        buttonsWidget.hide();
+    }
+    if (state == AdministratorControl) {
+        buttonsWidget.show();
+    }
+}
+
+void FileSystemViewWidget::updateButtons() {
+    clearLayout(&editButtonsLayout, true);
+    QList<AccessRight*> list = database->getRightsList();
+
+    copyButton = new QPushButton(("F5 Copy"));
+    copyButton->setFlat(1);
+    copyButton->setShortcut(QKeySequence(Qt::Key_F5));
+    connect(copyButton, SIGNAL(released()), this, SLOT(copyButtonClickedSlot()));
+    editButtonsLayout.addWidget(copyButton);
+
+    for (int i = 0; i < list.count(); i++) {
+        QPushButton *btn = new QPushButton(QString("F%1 %2").arg(i + 1).arg(list.at(i)->getName()), this);
+        btn->setFlat(1);
+        editButtonsLayout.addWidget(btn);
+        QFrame *line = new QFrame(this);
+        line->setFrameShape(QFrame::VLine);
+        line->setFrameShadow(QFrame::Raised);
+        editButtonsLayout.addWidget(line);
+        mapper.setMapping(btn, list.at(i)->getName());
+        connect(btn, SIGNAL(clicked()), &mapper, SLOT(map()));
+    }
+    currentUserComboBox = new QComboBox;
+    currentUserComboBox->addItems(database->getUsersNameList());
+    connect(currentUserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(userChosenSlot(int)));
+    editButtonsLayout.addWidget(currentUserComboBox);
+}
+
+void FileSystemViewWidget::clearLayout(QLayout *layout, bool deleteWidgets) {
+    while (QLayoutItem* item = layout->takeAt(0)) {
+        if (deleteWidgets) {
+            if (QWidget* widget = item->widget()) {
+                widget->deleteLater();
+            }
+            if (QLayout* childLayout = item->layout()) {
+                clearLayout(childLayout, deleteWidgets);
+            }
+            delete item;
+        }
+    }
+}
+
+void FileSystemViewWidget::changePathRight(QString right) {
+    PermissionFilterModel *filter = dynamic_cast<PermissionFilterModel*>(focusTreeView->model());
+    if (filter) {
+        FileSystemPermissionModel *source = dynamic_cast<FileSystemPermissionModel*>(filter->sourceModel());
+        if (source) {
+            QList<QString> list = database->getRightsNameList();
+            database->changeRight(source->filePath(filter->mapToSource(focusTreeView->currentIndex())), right);
+            filter->invalidate();
+//            focusTreeView->update(focusTreeView->currentIndex());
+        }
+    }
 }

@@ -18,13 +18,16 @@ private:
     QGridLayout mainLayout;
     QLineEdit userNameLineEdit;
     QPushButton userCreateButton;
+    QPushButton userRemoveButton;
 
     QLineEdit roleNameLineEdit;
     QPushButton roleCreateButton;
+    QPushButton roleRemoveButton;
 
     QLineEdit accessRightNameLineEdit;
     QPushButton accessRightCreateButton;
     QSpinBox accessRightLevelSpinBox;
+    QPushButton accessRightRemoveButton;
 
     Database *database;
 
@@ -32,6 +35,9 @@ public slots:
     void userCreateSlot();
     void roleCreateSlot();
     void accessRightCreateSlot();
+    void userRemoveSlot();
+    void roleRemoveSlot();
+    void accessRightRemoveSlot();
 };
 
 #endif // CREATE_ITEMS_WIDGET_H

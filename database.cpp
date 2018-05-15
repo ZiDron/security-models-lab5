@@ -84,6 +84,7 @@ bool Database::removeRight(QString name) {
             roleList.at(i)->getPermisions()->removeAll(right);
         }
     }
+    emit updated();
     return true;
 }
 
@@ -101,6 +102,7 @@ bool Database::removeRole(QString name) {
             usersList.at(i)->getRole()->removeAll(role);
         }
     }
+    emit updated();
     return true;
 }
 
@@ -112,7 +114,7 @@ bool Database::removeUser(QString name) {
     }
 
     usersList.removeAll(user);
-
+    emit updated();
     return true;
 }
 
