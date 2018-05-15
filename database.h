@@ -21,9 +21,9 @@ public:
         Add = 0,
         Remove = 1
     };
-    void createNewRight(QString name, int level);
-    void createNewRole(QString name, QList<QString> *rightNames = 0);
-    void createNewUser(QString name, QList<QString> *roleNames = 0);
+    bool createNewRight(QString name, int level);
+    bool createNewRole(QString name, QList<QString> *rightNames = 0);
+    bool createNewUser(QString name, QList<QString> *roleNames = 0);
 
     QList<AccessRight*> getRightsList();
     QList<Role*> getRoleList();

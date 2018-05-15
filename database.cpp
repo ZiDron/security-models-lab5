@@ -14,13 +14,21 @@ Database::Database() {
 
 }
 
-void Database::createNewRight(QString name, int level) {
+bool Database::createNewRight(QString name, int level) {
+    if (getAccessRightByName(name)) {
+        return false;
+    }
     rightsList.append(new AccessRight(name, level));
     save();
     emit updated();
+    return true;
 }
 
-void Database::createNewRole(QString name, QList<QString> *rightNames) {
+bool Database::createNewRole(QString name, QList<QString> *rightNames) {
+    if (getRoleByName(name)) {
+        return false;
+    }
+
     QList<AccessRight *> rightListTemp;
     if (rightNames) {
         for (int i = 0; i < rightNames->size(); i++) {
@@ -33,9 +41,14 @@ void Database::createNewRole(QString name, QList<QString> *rightNames) {
     roleList.append(new Role(name, rightListTemp));
     save();
     emit updated();
+    return true;
 }
 
-void Database::createNewUser(QString name, QList<QString> *roleNames) {
+bool Database::createNewUser(QString name, QList<QString> *roleNames) {
+    if (getUserByName(name)) {
+        return false;
+    }
+
     QList<Role *> roleListTemp;
     if (roleNames) {
         for (int i = 0; i < roleNames->size(); i++) {
@@ -48,6 +61,7 @@ void Database::createNewUser(QString name, QList<QString> *roleNames) {
     usersList.append(new User(name, roleListTemp));
     save();
     emit updated();
+    return true;
 }
 
 QList<AccessRight *> Database::getRightsList() {
