@@ -130,6 +130,16 @@ QList<User *> Database::getUsersList() {
     return usersList;
 }
 
+AccessRight *Database::getHighestRight() {
+    AccessRight *r = rightsList.at(0);
+    for (int i = 0; i < rightsList.size(); i++) {
+        if (rightsList[i]->getLevel() > r->getLevel()) {
+            r = rightsList[i];
+        }
+    }
+    return r;
+}
+
 AccessRight *Database::getAccessRightByName(QString name) {
     for (int i = 0; i < rightsList.size(); i++) {
         if (rightsList[i]->getName() == name) {

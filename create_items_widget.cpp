@@ -21,7 +21,7 @@ CreateItemsWidget::CreateItemsWidget(Database *db, QWidget *parent) : QWidget(),
     mainLayout.addWidget(&roleRemoveButton, 1, 4, 1, 1);
 
     mainLayout.addWidget(&accessRightNameLineEdit, 2, 0, 1, 1);
-    mainLayout.addWidget(&accessRightLevelSpinBox, 2, 1, 1, 1);
+//    mainLayout.addWidget(&accessRightLevelSpinBox, 2, 1, 1, 1);
     mainLayout.addWidget(&accessRightCreateButton, 2, 3, 1, 1);
     mainLayout.addWidget(&accessRightRemoveButton, 2, 4, 1, 1);
 
@@ -29,12 +29,22 @@ CreateItemsWidget::CreateItemsWidget(Database *db, QWidget *parent) : QWidget(),
     roleNameLineEdit.setPlaceholderText(QString("Enter Role name"));
     accessRightNameLineEdit.setPlaceholderText(QString("Enter Right name"));
 
+    userCreateButton.setFlat(true);
+    roleCreateButton.setFlat(true);
+    accessRightCreateButton.setFlat(true);
+    userRemoveButton.setFlat(true);
+    roleRemoveButton.setFlat(true);
+    accessRightRemoveButton.setFlat(true);
+
+
+
     connect(&userCreateButton, SIGNAL(released()), this, SLOT(userCreateSlot()));
     connect(&roleCreateButton, SIGNAL(released()), this, SLOT(roleCreateSlot()));
     connect(&accessRightCreateButton, SIGNAL(released()), this, SLOT(accessRightCreateSlot()));
     connect(&userRemoveButton, SIGNAL(released()), this, SLOT(userRemoveSlot()));
     connect(&roleRemoveButton, SIGNAL(released()), this, SLOT(roleRemoveSlot()));
     connect(&accessRightRemoveButton, SIGNAL(released()), this, SLOT(accessRightRemoveSlot()));
+    setMinimumWidth(400);
 }
 
 void CreateItemsWidget::userCreateSlot() {
@@ -50,7 +60,7 @@ void CreateItemsWidget::roleCreateSlot() {
 }
 
 void CreateItemsWidget::accessRightCreateSlot() {
-    if (database->createNewRight(accessRightNameLineEdit.text(), accessRightLevelSpinBox.value())) {
+    if (database->createNewRight(accessRightNameLineEdit.text(), database->getHighestRight()->getLevel() + 1)) {
         accessRightNameLineEdit.clear();
         accessRightLevelSpinBox.setValue(0);
     }

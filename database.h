@@ -43,6 +43,7 @@ public:
     QList<QString> getRightsNameList();
     QList<QString> getRoleNameList();
     QList<QString> getUsersNameList();
+    AccessRight* getHighestRight();
 private:
     AccessRight *getAccessRightByName(QString name);
     FileSystemPathRight *getFileSystemPathRighByPath(QString path);

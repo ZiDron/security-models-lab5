@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QShortcut>
 
 class CreateItemsWidget : public QWidget {
     Q_OBJECT

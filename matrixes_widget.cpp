@@ -9,5 +9,5 @@ MatrixesWidget::MatrixesWidget(Database *database, QWidget *parent) : QWidget(pa
     splitter.addWidget(&roleMatrix);
     splitter.addWidget(&accessRightMatrix);
     mainLayout.addWidget(&splitter, 10);
-    setMinimumSize(1000, 600);
+    setMinimumSize(500, 600);
 }

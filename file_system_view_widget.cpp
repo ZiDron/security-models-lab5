@@ -83,6 +83,8 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
 
     updateButtons();
 
+    QShortcut *shortCut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_L), this, SLOT(changeAdminControls()));
+
     splitter.addWidget(leftArea);
     splitter.addWidget(rightArea);
     mainLayout.setContentsMargins(0, 0, 0, 0);
@@ -90,18 +92,21 @@ FileSystemViewWidget::FileSystemViewWidget(SystemAccessRight *systemAccessRight,
     mainLayout.addWidget(&splitter, 1);
     mainLayout.addWidget(&buttonsWidget);
 
-    connect(&mapper, SIGNAL(mapped(QString)), this, SLOT());
+    connect(&mapper, SIGNAL(mapped(QString)), this, SLOT(changePathRight(QString)));
+    connect(database, SIGNAL(updated()), this, SLOT(updateButtons()));
     connect(&treeViewLeft, SIGNAL(clicked(QModelIndex)), this, SLOT(leftTreeViewActivatedSlot(QModelIndex)));
     connect(&treeViewRight, SIGNAL(clicked(QModelIndex)), this, SLOT(rightTreeViewActivatedSlot(QModelIndex)));
     connect(&treeViewLeft, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(leftTreeViewClickedSlot(QModelIndex)));
     connect(&treeViewRight, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(rightTreeViewClickedSlot(QModelIndex)));
+    buttonsWidget.hide();
 
-    setMinimumSize(1000, 600);
+    setMinimumSize(900, 600);
 }
 
 void FileSystemViewWidget::copyButtonClickedSlot() {
-    FileSystemPermissionModel *model = dynamic_cast<FileSystemPermissionModel*>(focusTreeView->model());
-    QString source = model->filePath(focusTreeView->currentIndex());
+    PermissionFilterModel *filter = dynamic_cast<PermissionFilterModel*>(focusTreeView->model());
+    FileSystemPermissionModel *sourceModel = dynamic_cast<FileSystemPermissionModel*>(filter->sourceModel());
+    QString source = sourceModel->filePath(filter->mapToSource(focusTreeView->currentIndex()));
     QString destination;
     if (focusTreeView == &treeViewLeft) {
         destination = pathLineEditRight.text();

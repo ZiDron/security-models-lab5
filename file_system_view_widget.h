@@ -18,6 +18,7 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QSignalMapper>
+#include <QShortcut>
 
 class FileSystemViewWidget : public QWidget
 {
